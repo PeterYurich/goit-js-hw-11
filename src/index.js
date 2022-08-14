@@ -63,38 +63,39 @@ const getPictures = async (e) => {
 
     currentPage = 0;
     const url = makeCurrentUrlRequest()
-    const res = await (await axios.get(url)).data
+    try {
+        const res = await (await axios.get(url)).data
 
-    if (res.total === 0) {
-        Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-        refs.gallery.innerHTML = ''
+        if (res.total === 0) {
+            Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+            refs.gallery.innerHTML = ''
+        }
+
+        Notiflix.Notify.info(`Hooray! We've found ${res.totalHits} images.`)
+
+        const markupStr = await res.hits.reduce(makeMarkup, "")
+        refs.gallery.innerHTML = markupStr
+
+        refs.loadMoreBtn.classList.remove("visually-hidden")
+    } catch (error) {
+        console.log('error is:', error)
     }
-
-    Notiflix.Notify.info(`Hooray! We've found ${res.totalHits} images.`)
-
-    const markupStr = await res.hits.reduce(makeMarkup, "")
-    refs.gallery.innerHTML = markupStr
-
-    refs.loadMoreBtn.classList.remove("visually-hidden")
 }
 
 const getMorePictures = async (e) => {
     const url = makeCurrentUrlRequest()
-    try {
-        const res = await (await axios.get(url)).data
 
-        if (Number(res.total / (currentPage * perPage) <= 1)) {
-            Notiflix.Notify.info("Now you can see all the matching results we have")
-            refs.loadMoreBtn.classList.add('visually-hidden')
-        }
+    const res = await (await axios.get(url)).data
 
-        const markupStr = await res.hits.reduce(makeMarkup, "")
-
-        refs.gallery.insertAdjacentHTML("beforeend", markupStr)
-        lightbox.refresh()
-    } catch (error) {
-        console.log('error is:', error)
+    if (Number(res.total / (currentPage * perPage) <= 1)) {
+        Notiflix.Notify.info("Now you can see all the matching results we have")
+        refs.loadMoreBtn.classList.add('visually-hidden')
     }
+
+    const markupStr = await res.hits.reduce(makeMarkup, "")
+
+    refs.gallery.insertAdjacentHTML("beforeend", markupStr)
+    lightbox.refresh()
 }
 
 refs.form.addEventListener('submit', getPictures)
