@@ -12,7 +12,6 @@ const refs = {
     gallery: document.querySelector(".gallery"),
     loadMoreBtn: document.querySelector(".load-more"),
     input: document.querySelector("[name=searchQuery]"),
-    photoCard: document.querySelector('.photo-card')
 }
 
 refs.input.value = "violet sun flowers summer"
@@ -80,7 +79,6 @@ const getPictures = async (e) => {
 
         refs.loadMoreBtn.classList.remove("visually-hidden")
 
-        // smoothScroll()
     } catch (error) {
         console.log('error is:', error)
     }
@@ -99,6 +97,7 @@ const getMorePictures = async (e) => {
     const markupStr = await res.hits.reduce(makeMarkup, "")
 
     refs.gallery.insertAdjacentHTML("beforeend", markupStr)
+    smoothScroll()
     lightbox.refresh()
 }
 
@@ -120,12 +119,11 @@ refs.gallery.addEventListener('click', (e) => {
 // scroll:
 
 function smoothScroll () {
-    const { height: cardHeight } = document
+    const cardHeight = document
         .querySelector(".gallery")
-        .firstElementChild.getBoundingClientRect();
-    
-    const size = refs.photoCard.getBoundingClientRect()
-    console.log(refs.photoCard)
+        .firstElementChild.getBoundingClientRect().height;
+
+        console.log(cardHeight)
     
     window.scrollBy({
         top: cardHeight * 2,
