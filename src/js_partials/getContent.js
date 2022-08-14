@@ -62,7 +62,6 @@ const getMorePictures = async (e) => {
 
     refs.gallery.insertAdjacentHTML("beforeend", markupStr)
     smoothScroll()
-    SimpleLightbox.refresh()
 }
 
 export { getPictures, getMorePictures, simplelightbox }
