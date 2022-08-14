@@ -5,6 +5,10 @@ import axios from 'axios';
 
 import "simplelightbox/dist/simple-lightbox.min.css";
 import simpleLightbox from 'simplelightbox';
+import _ from 'lodash';
+
+
+
 
 
 const refs = {
@@ -14,7 +18,7 @@ const refs = {
     input: document.querySelector("[name=searchQuery]"),
 }
 
-refs.input.value = "violet sun flowers summer"
+refs.input.value = "violet sun flowers summer" //result with 50 pictures
 
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = "29220368-6467898673c76bc95c006b920";
@@ -89,16 +93,16 @@ const getMorePictures = async (e) => {
 
     const res = await (await axios.get(url)).data
 
-    if (Number(res.total / (currentPage * perPage) <= 1)) {
+    if (Number(res.total <= (currentPage * perPage))) {
         Notiflix.Notify.info("Now you can see all the matching results we have")
         refs.loadMoreBtn.classList.add('visually-hidden')
+        window.removeEventListener('scroll', askMorePicture)
     }
 
     const markupStr = await res.hits.reduce(makeMarkup, "")
 
     refs.gallery.insertAdjacentHTML("beforeend", markupStr)
     smoothScroll()
-    lightbox.refresh()
 }
 
 refs.form.addEventListener('submit', getPictures)
@@ -109,44 +113,29 @@ refs.loadMoreBtn.addEventListener('click', getMorePictures)
 refs.gallery.addEventListener('click', (e) => {
     e.preventDefault()
     if (e.target.nodeName !== "IMG") { return }
-    let lightbox = new simpleLightbox('.photo-card a');
-    lightbox.on('show.simplelightbox');
+    const lightbox = new simpleLightbox('.photo-card a');
 })
 
 
-// additional options:
+// auto-scroll:
 
-// scroll:
-
-function smoothScroll () {
+function smoothScroll() {
     const cardHeight = document
         .querySelector(".gallery")
         .firstElementChild.getBoundingClientRect().height;
 
-        console.log(cardHeight)
-    
     window.scrollBy({
         top: cardHeight * 2,
         behavior: "smooth",
     });
 }
 
-// autopagination:
+// auto-pagination:
 
-function autopagination () {
-window.addEventListener("scroll", function () {
-
-    const content = document.querySelector('gallery');
-    // let counter = 1;
-
-    const contentHeight = content.offsetHeight;      // 1) высота блока контента вместе с границами
-    console.log(contentHeight)
-    const yOffset = window.pageYOffset;      // 2) текущее положение скролбара
-    const windowHeight = window.innerHeight;      // 3) высота внутренней области окна документа
-    const y = yOffset + windowHeight;
-
-    // если пользователь достиг конца
-    if (y >= contentHeight) {
+const askMorePicture = event => {
+    if (scrollY + innerHeight >= document.body.scrollHeight) {
+        console.log('the end')
         getMorePictures()
-    }
-});}
+        window.removeEventListener('scroll', askMorePicture)
+    }}
+window.addEventListener('scroll', askMorePicture);
