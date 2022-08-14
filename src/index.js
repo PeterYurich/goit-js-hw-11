@@ -11,7 +11,8 @@ const refs = {
     form: document.querySelector('#search-form'),
     gallery: document.querySelector(".gallery"),
     loadMoreBtn: document.querySelector(".load-more"),
-    input: document.querySelector("[name=searchQuery]")
+    input: document.querySelector("[name=searchQuery]"),
+    photoCard: document.querySelector('.photo-card')
 }
 
 refs.input.value = "violet sun flowers summer"
@@ -69,6 +70,7 @@ const getPictures = async (e) => {
         if (res.total === 0) {
             Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
             refs.gallery.innerHTML = ''
+            return
         }
 
         Notiflix.Notify.info(`Hooray! We've found ${res.totalHits} images.`)
@@ -77,6 +79,8 @@ const getPictures = async (e) => {
         refs.gallery.innerHTML = markupStr
 
         refs.loadMoreBtn.classList.remove("visually-hidden")
+
+        // smoothScroll()
     } catch (error) {
         console.log('error is:', error)
     }
@@ -110,15 +114,41 @@ refs.gallery.addEventListener('click', (e) => {
     lightbox.on('show.simplelightbox');
 })
 
+
+// additional options:
+
 // scroll:
 
-// const { height: cardHeight } = document
-//     .querySelector(".gallery")
-//     .firstElementChild.getBoundingClientRect();
+function smoothScroll () {
+    const { height: cardHeight } = document
+        .querySelector(".gallery")
+        .firstElementChild.getBoundingClientRect();
+    
+    const size = refs.photoCard.getBoundingClientRect()
+    console.log(refs.photoCard)
+    
+    window.scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
+    });
+}
 
-// // console.log(size)
+// autopagination:
 
-// window.scrollBy({
-//     top: cardHeight * 2,
-//     behavior: "smooth",
-// });
+function autopagination () {
+window.addEventListener("scroll", function () {
+
+    const content = document.querySelector('gallery');
+    // let counter = 1;
+
+    const contentHeight = content.offsetHeight;      // 1) высота блока контента вместе с границами
+    console.log(contentHeight)
+    const yOffset = window.pageYOffset;      // 2) текущее положение скролбара
+    const windowHeight = window.innerHeight;      // 3) высота внутренней области окна документа
+    const y = yOffset + windowHeight;
+
+    // если пользователь достиг конца
+    if (y >= contentHeight) {
+        getMorePictures()
+    }
+});}
