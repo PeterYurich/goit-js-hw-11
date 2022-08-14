@@ -90,6 +90,7 @@ body {
   flex-wrap: wrap;
   gap: 30px;
 }
+
 .photo-card {
   width: 350px;
   height: 300px;
@@ -100,16 +101,22 @@ body {
   padding: 10px;
   display: flex;
   align-items:flex-end;
-  justify-content: start;
+  justify-content: space-between;
 }
 
 .info {
   margin: 0;
 }
 
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  margin: 0;
+  }
+
 .info-item:not(:last-child) {
   margin-right: 5px;
-  
 }
 
 /* .img-link {
@@ -121,6 +128,7 @@ body {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  margin:  0;
   margin-bottom: 10px;
 }
 

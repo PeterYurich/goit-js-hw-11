@@ -66,9 +66,11 @@ const getPictures = async (e) => {
     const res = await (await axios.get(url)).data
 
     if (res.total === 0) {
-        Notiflix.Notify.info("Sorry, there are no images matching your search query. Please try again.")
+        Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
         refs.gallery.innerHTML = ''
     }
+
+    Notiflix.Notify.info(`Hooray! We've found ${res.totalHits} images.`)
 
     const markupStr = await res.hits.reduce(makeMarkup, "")
     refs.gallery.innerHTML = markupStr
@@ -100,6 +102,18 @@ refs.gallery.addEventListener('click', (e) => {
     e.preventDefault()
     if (e.target.nodeName !== "IMG") { return }
     let lightbox = new simpleLightbox('.photo-card a');
-    console.log(lightbox)
     lightbox.on('show.simplelightbox');
 })
+
+// scroll:
+
+const { height: cardHeight } = document
+    .querySelector(".gallery")
+    .firstElementChild.getBoundingClientRect();
+
+    // console.log(size)
+
+window.scrollBy({
+    top: cardHeight * 2,
+    behavior: "smooth",
+});
