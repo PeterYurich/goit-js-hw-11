@@ -80,17 +80,21 @@ const getPictures = async (e) => {
 
 const getMorePictures = async (e) => {
     const url = makeCurrentUrlRequest()
-    const res = await (await axios.get(url)).data
+    try {
+        const res = await (await axios.get(url)).data
 
-    if (Number(res.total / (currentPage * perPage) <= 1)) {
-        Notiflix.Notify.info("Now you can see all the matching results we have")
-        refs.loadMoreBtn.classList.add('visually-hidden')
+        if (Number(res.total / (currentPage * perPage) <= 1)) {
+            Notiflix.Notify.info("Now you can see all the matching results we have")
+            refs.loadMoreBtn.classList.add('visually-hidden')
+        }
+
+        const markupStr = await res.hits.reduce(makeMarkup, "")
+
+        refs.gallery.insertAdjacentHTML("beforeend", markupStr)
+        lightbox.refresh()
+    } catch (error) {
+        console.log('error is:', error)
     }
-
-    const markupStr = await res.hits.reduce(makeMarkup, "")
-
-    refs.gallery.insertAdjacentHTML("beforeend", markupStr)
-    lightbox.refresh()
 }
 
 refs.form.addEventListener('submit', getPictures)
@@ -107,13 +111,13 @@ refs.gallery.addEventListener('click', (e) => {
 
 // scroll:
 
-const { height: cardHeight } = document
-    .querySelector(".gallery")
-    .firstElementChild.getBoundingClientRect();
+// const { height: cardHeight } = document
+//     .querySelector(".gallery")
+//     .firstElementChild.getBoundingClientRect();
 
-    // console.log(size)
+// // console.log(size)
 
-window.scrollBy({
-    top: cardHeight * 2,
-    behavior: "smooth",
-});
+// window.scrollBy({
+//     top: cardHeight * 2,
+//     behavior: "smooth",
+// });
