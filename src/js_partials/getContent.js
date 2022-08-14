@@ -7,7 +7,8 @@ import { smoothScroll } from './autoscroll'
 import Notiflix from 'notiflix'
 import axios from 'axios'
 
-function askMorePicture () {
+
+function askMorePicture() {
     if (scrollY + innerHeight >= document.body.scrollHeight) {
         getMorePictures()
     }
@@ -21,6 +22,7 @@ const getPictures = async (e) => {
     const url = makeCurrentUrlRequest()
     try {
         const res = await (await axios.get(url)).data
+        console.log(res.total)
 
         if (res.total === 0) {
             Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
@@ -60,4 +62,4 @@ const getMorePictures = async (e) => {
     smoothScroll()
 }
 
-export { getPictures, getMorePictures }
+export { getPictures, getMorePictures, simplelightbox }
