@@ -49,19 +49,23 @@ const getPictures = async (e) => {
 
 const getMorePictures = async (e) => {
     const url = makeCurrentUrlRequest()
+    try {
+        
+        const res = await (await axios.get(url)).data
 
-    const res = await (await axios.get(url)).data
+        if (Number(res.total <= (currentPage * perPage))) {
+            Notiflix.Notify.info("Now you can see all the matching results we have")
+            refs.loadMoreBtn.classList.add('visually-hidden')
+            window.removeEventListener('scroll', askMorePicture)
+        }
 
-    if (Number(res.total <= (currentPage * perPage))) {
-        Notiflix.Notify.info("Now you can see all the matching results we have")
-        refs.loadMoreBtn.classList.add('visually-hidden')
-        window.removeEventListener('scroll', askMorePicture)
+        const markupStr = await res.hits.reduce(makeMarkup, "")
+
+        refs.gallery.insertAdjacentHTML("beforeend", markupStr)
+        smoothScroll()
+    } catch (error) {
+        console.log('error is:', error)
     }
-
-    const markupStr = await res.hits.reduce(makeMarkup, "")
-
-    refs.gallery.insertAdjacentHTML("beforeend", markupStr)
-    smoothScroll()
 }
 
 export { getPictures, getMorePictures, simplelightbox }
