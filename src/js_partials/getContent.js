@@ -1,6 +1,6 @@
 
 import { makeMarkup } from './cardMarkup'
-import { currentPage, perPage, makeCurrentUrlRequest } from './makeUrlRequest'
+// import { currentPage, perPage, makeCurrentUrlRequest } from './makeUrlRequest'
 import { refs } from './refs'
 import { smoothScroll } from './autoscroll'
 
@@ -8,6 +8,19 @@ import Notiflix from 'notiflix'
 import axios from 'axios'
 import SimpleLightbox from 'simplelightbox'
 
+import { refs } from "./refs";
+
+const BASE_URL = 'https://pixabay.com/api/';
+const API_KEY = "29220368-6467898673c76bc95c006b920";
+
+let currentPage = 0;
+const perPage = 40;
+
+function makeCurrentUrlRequest() {
+    currentPage += 1;
+    const searchRequest = refs.input.value
+    return `${BASE_URL}?key=${API_KEY}&q=${searchRequest}&image_type="photo"&orientation="horizontal"&safesearch="true"&per_page=${perPage}&page=${currentPage}`;
+}
 
 function askMorePicture() {
     if (scrollY + innerHeight >= document.body.scrollHeight) {
@@ -68,4 +81,5 @@ const getMorePictures = async (e) => {
     }
 }
 
-export { getPictures, getMorePictures, simplelightbox }
+export { getPictures, getMorePictures, simplelightbox,}
+
