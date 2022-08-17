@@ -4,7 +4,7 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 
 import { refs } from './js_partials/refs'
-import { getPictures, simplelightbox} from './js_partials/getContent'
+import { getPictures } from './js_partials/getContent'
 
 refs.form.addEventListener('submit', getPictures)
 
