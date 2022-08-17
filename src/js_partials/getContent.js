@@ -6,6 +6,7 @@ import { smoothScroll } from './autoscroll'
 import Notiflix from 'notiflix'
 import axios from 'axios'
 import SimpleLightbox from 'simplelightbox'
+import _ from 'lodash'
 
 import { refs } from "./refs";
 
@@ -23,9 +24,11 @@ function makeCurrentUrlRequest() {
 
 function askMorePicture() {
     if (scrollY + innerHeight >= document.body.scrollHeight) {
+        // _.debounce(, 500 )
         getMorePictures()
     }
 }
+
 
 const getPictures = async (e) => {
     e.preventDefault()
@@ -46,11 +49,13 @@ const getPictures = async (e) => {
         refs.gallery.innerHTML = markupStr
 
         Notiflix.Notify.info(`Hooray! We've found ${res.totalHits} images.`)
-
-        // refs.loadMoreBtn.classList.remove("visually-hidden")
-        if (innerHeight <= document.body.scrollHeight) {
-            window.addEventListener('scroll', askMorePicture);
+        
+        if (res.totalHits > perPage) {
+            refs.loadMoreBtn.classList.remove("visually-hidden")
         }
+
+        // if (innerHeight <= document.body.scrollHeight) {
+            // window.addEventListener('scroll', askMorePicture);        }
 
         new SimpleLightbox('.photo-card a')
 
@@ -79,5 +84,7 @@ const getMorePictures = async (e) => {
         console.log('error is:', error)
     }
 }
+
+refs.loadMoreBtn.addEventListener('click', getMorePictures)
 
 export { getPictures, getMorePictures, simplelightbox,}
