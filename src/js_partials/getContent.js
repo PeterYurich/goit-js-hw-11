@@ -1,20 +1,18 @@
-
 import { makeMarkup } from './cardMarkup'
 // import { currentPage, perPage, makeCurrentUrlRequest } from './makeUrlRequest'
 import { refs } from './refs'
 import { smoothScroll } from './autoscroll'
 
 import Notiflix from 'notiflix'
+import axios from 'axios'
 import SimpleLightbox from 'simplelightbox'
+
 import { refs } from "./refs";
-
-import fetchContent from './fetchContent'
-
 
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = "29220368-6467898673c76bc95c006b920";
 
-let currentPage = 1;
+let currentPage = 0;
 const perPage = 40;
 
 function makeCurrentUrlRequest() {
@@ -34,9 +32,10 @@ const getPictures = async (e) => {
     refs.gallery.innerHTML = ''
 
     currentPage = 0;
+    const url = makeCurrentUrlRequest()
     try {
-        const res = await fetchContent();
-        console.log(res)
+        const res = await (await axios.get(url)).data
+
         if (res.total === 0) {
             Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
             refs.gallery.innerHTML = ''
@@ -62,8 +61,10 @@ const getPictures = async (e) => {
 
 const getMorePictures = async (e) => {
     const url = makeCurrentUrlRequest()
-    try {        
-        const res = await fetchContent();
+    try {
+        
+        const res = await (await axios.get(url)).data
+
         if (Number(res.total <= (currentPage * perPage))) {
             Notiflix.Notify.info("Now you can see all the matching results we have")
             refs.loadMoreBtn.classList.add('visually-hidden')
@@ -79,5 +80,4 @@ const getMorePictures = async (e) => {
     }
 }
 
-export { getPictures, getMorePictures, simplelightbox, makeCurrentUrlRequest}
-
+export { getPictures, getMorePictures, simplelightbox,}
