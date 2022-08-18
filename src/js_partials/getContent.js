@@ -22,12 +22,13 @@ function makeCurrentUrlRequest() {
     return `${BASE_URL}?key=${API_KEY}&q=${searchRequest}&image_type="photo"&orientation="horizontal"&safesearch="true"&per_page=${perPage}&page=${currentPage}`;
 }
 
-function askMorePicture() {
+const  askMorePicture = () => {
     if (scrollY + innerHeight >= document.body.scrollHeight) {
         // _.debounce(, 500 )
         getMorePictures()
     }
 }
+const askMorePictureDeb = _.debounce(askMorePicture, 400)
 
 
 const getPictures = async (e) => {
@@ -51,11 +52,11 @@ const getPictures = async (e) => {
         Notiflix.Notify.info(`Hooray! We've found ${res.totalHits} images.`)
         
         if (res.totalHits > perPage) {
-            refs.loadMoreBtn.classList.remove("visually-hidden")
+            // refs.loadMoreBtn.classList.remove("visually-hidden")
         }
 
-        // if (innerHeight <= document.body.scrollHeight) {
-            // window.addEventListener('scroll', askMorePicture);        }
+        if (innerHeight <= document.body.scrollHeight) {
+            window.addEventListener('scroll', askMorePictureDeb);        }
 
         new SimpleLightbox('.photo-card a')
 
@@ -72,8 +73,8 @@ const getMorePictures = async (e) => {
 
         if (Number(res.total <= (currentPage * perPage))) {
             Notiflix.Notify.info("Now you can see all the matching results we have")
-            refs.loadMoreBtn.classList.add('visually-hidden')
-            window.removeEventListener('scroll', askMorePicture)
+            // refs.loadMoreBtn.classList.add('visually-hidden')
+            window.removeEventListener('scroll', askMorePictureDeb)
         }
 
         const markupStr = await res.hits.reduce(makeMarkup, "")
@@ -85,6 +86,6 @@ const getMorePictures = async (e) => {
     }
 }
 
-refs.loadMoreBtn.addEventListener('click', getMorePictures)
+// refs.loadMoreBtn.addEventListener('click', getMorePictures)
 
 export { getPictures, getMorePictures, simplelightbox,}
